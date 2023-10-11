@@ -1,10 +1,9 @@
 name: Deploy new version
 
-# Only deploy when a new tag is pushed
-on:
-    push:
-        tags:
-          - "v*.*.*"
+on: 
+  push:
+    # only trigger on branches, not on tags
+    branches: '**'
           
 # Must match the project() name in CMakeLists.txt
 env:
