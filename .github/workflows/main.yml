@@ -68,6 +68,7 @@ jobs:
 
     - name: Release uf2 with Notes
       uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
         files: ${{github.workspace}}/build/pico_scpi_usbtmc_labtool.uf2
 
