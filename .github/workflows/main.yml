@@ -60,8 +60,14 @@ jobs:
 
     - name: Upload uf2 file as artifact
       uses: actions/upload-artifact@v3
-      env:
-        ACTIONS_RUNNER_DEBUG: true
+      #env:
+      #  ACTIONS_RUNNER_DEBUG: true
       with:
         name: pico_scpi_usbtmc_labtool.uf2
         path:  ${{github.workspace}}/build/pico_scpi_usbtmc_labtool.uf2
+
+    - name: Release uf2 with Notes
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{github.workspace}}/build/pico_scpi_usbtmc_labtool.uf2
+
