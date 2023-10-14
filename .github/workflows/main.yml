@@ -64,6 +64,10 @@ jobs:
       run: |
           echo "PICO_SDK_PATH is: $PICO_SDK_PATH"
           echo "SCPI_LIB_PATH is: $SCPI_LIB_PATH"
+          ls -la
+            working-directory: ${{github.workspace}}
+          ls -la
+            working-directory: $SCPI_LIB_PATH
           mkdir build
           cmake -B build -S .
           make -C build
