@@ -54,7 +54,7 @@ jobs:
     - name: Build
       env:
           PICO_SDK_PATH: ${{github.workspace}}\pico-sdk
-          SCPI_LIB_PATH: ${{github.workspace}}scpi-parser
+          SCPI_LIB_PATH: ${{github.workspace}}\scpi-parser
       run: |
           mkdir build
           cmake -B build -S .
