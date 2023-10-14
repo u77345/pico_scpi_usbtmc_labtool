@@ -44,17 +44,23 @@ jobs:
           cd scpi-parser
           git submodule update --init
 
-    - name: Install toolchains
-      run: |
-          set -ex
-          wget -q https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
-          tar -xvf arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz 
-          rm arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
-
+    #- name: Install toolchains
+    #  run: |
+    #      set -ex
+    #      wget -q https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
+    #      tar -xvf arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz 
+    #      rm arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
+    
+    - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
+      uses: carlosperate/arm-none-eabi-gcc-action@v1
+      with:
+        release: '12.3.Rel1' # <-- The compiler release to use
+    
     - name: Build
       env:
           PICO_SDK_PATH: ${{github.workspace}}/pico-sdk
           SCPI_LIB_PATH: ${{github.workspace}}/scpi-parser
+          #PICO_TOOLCHAIN_PATH: 
       run: |
           mkdir build
           cmake -B build -S .
