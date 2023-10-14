@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Git pull Labtool
+    - name: Get Labtool
       run: |
           set -ex
           git clone https://github.com/jancumps/pico_scpi_usbtmc_labtool
@@ -23,7 +23,7 @@ jobs:
           git checkout 47-reply-when-service-request-is-invoked
           cd ..
 
-    - name: Git pull Pico SDK
+    - name: Get Pico SDK
       run: |
           set -ex
           git clone https://github.com/raspberrypi/pico-sdk.git
@@ -38,18 +38,11 @@ jobs:
           git apply ../../../../../pico_scpi_usbtmc_labtool/usbtmc_device.patch
           cd ../../../../..
 
-    - name: Git pull Scpi Parser
+    - name: Get Scpi Parser
       run: |    
           git clone https://github.com/j123b567/scpi-parser.git
           cd scpi-parser
           git submodule update --init
-
-    #- name: Install toolchains
-    #  run: |
-    #      set -ex
-    #      wget -q https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
-    #      tar -xvf arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz 
-    #      rm arm-gnu-toolchain-12.3.rel1-x86_64-arm-none-eabi.tar.xz
     
     - name: Install Arm GNU Toolchain (arm-none-eabi-gcc)
       uses: carlosperate/arm-none-eabi-gcc-action@v1
@@ -60,10 +53,13 @@ jobs:
       env:
           PICO_SDK_PATH: ${{github.workspace}}/pico-sdk
           SCPI_LIB_PATH: ${{github.workspace}}/scpi-parser/libscpi
-          #PICO_TOOLCHAIN_PATH: 
       run: |
-          echo "PICO_SDK_PATH is: $PICO_SDK_PATH"
-          echo "SCPI_LIB_PATH is: $SCPI_LIB_PATH"
           mkdir build
           cmake -B build -S .
           make -C build
+
+    - name: Upload uf2 file as artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: pico_scpi_usbtmc_labtool.uf2
+        path:  ${{github.workspace}}/build/pico_scpi_usbtmc_labtool.uf2
