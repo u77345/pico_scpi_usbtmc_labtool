@@ -25,14 +25,6 @@ add_compile_options(-Wall
 
 add_executable(pico_scpi_usbtmc_labtool
         ${CMAKE_CURRENT_SOURCE_DIR}/source/main.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/usb/usb_descriptors.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/usb/usbtmc_app.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/scpi/scpi-def.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/gpio/gpio_utils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/adc/adc_utils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/i2c/i2c_utils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/adc16/adc16_utils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/source/pwm/pwm_utils.c
         $ENV{SCPI_LIB_PATH}/src/parser.c
         $ENV{SCPI_LIB_PATH}/src/lexer.c
         $ENV{SCPI_LIB_PATH}/src/error.c
@@ -40,8 +32,31 @@ add_executable(pico_scpi_usbtmc_labtool
         $ENV{SCPI_LIB_PATH}/src/minimal.c
         $ENV{SCPI_LIB_PATH}/src/utils.c
         $ENV{SCPI_LIB_PATH}/src/units.c
-        $ENV{SCPI_LIB_PATH}/src/fifo.c
-        source/adc16/adc16_utils.c source/adc16/adc16_utils.h)
+        $ENV{SCPI_LIB_PATH}/src/fifo.c)
+
+add_library(pico_gpio STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/gpio/gpio_utils.c)
+target_include_directories(pico_gpio PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source/gpio ${CMAKE_CURRENT_LIST_DIR}/source)
+
+add_library(pico_adc STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/adc/adc_utils.c)
+target_include_directories(pico_adc PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source/adc ${CMAKE_CURRENT_LIST_DIR}/source)
+
+add_library(pico_i2c STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/i2c/i2c_utils.c)
+target_include_directories(pico_i2c PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source/i2c ${CMAKE_CURRENT_LIST_DIR}/source)
+
+add_library(pico_adc16 STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/adc16/adc16_utils.c)
+target_include_directories(pico_adc16 PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source/adc16 ${CMAKE_CURRENT_LIST_DIR}/source)
+
+add_library(pico_pwm STATIC ${CMAKE_CURRENT_SOURCE_DIR}/source/pwm/pwm_utils.c)
+target_include_directories(pico_pwm PRIVATE ${CMAKE_CURRENT_LIST_DIR}/source/pwm ${CMAKE_CURRENT_LIST_DIR}/source)
+
+add_library(pico_scpi_usbtmc_app STATIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/scpi/scpi-def.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/usb/usbtmc_app.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/usb/usb_descriptors.c)
+target_include_directories(pico_scpi_usbtmc_app PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/source/scpi
+        ${CMAKE_CURRENT_LIST_DIR}/source/usb
+        ${CMAKE_CURRENT_LIST_DIR}/source)
 
 target_include_directories(pico_scpi_usbtmc_labtool PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/source
@@ -55,7 +70,7 @@ target_include_directories(pico_scpi_usbtmc_labtool PRIVATE
         $ENV{SCPI_LIB_PATH}/inc
 )
 
-target_link_libraries(pico_scpi_usbtmc_labtool PUBLIC pico_stdlib tinyusb_device tinyusb_board hardware_gpio hardware_adc hardware_pwm hardware_i2c pico_unique_id)
+target_link_libraries(pico_scpi_usbtmc_labtool PUBLIC pico_stdlib tinyusb_device tinyusb_board hardware_gpio hardware_adc hardware_pwm hardware_i2c pico_unique_id pico_gpio pico_adc pico_i2c pico_adc16 pico_pwm pico_scpi_usbtmc_app)
 
 pico_set_linker_script(pico_scpi_usbtmc_labtool ${CMAKE_SOURCE_DIR}/memmap_custom.ld)
 
